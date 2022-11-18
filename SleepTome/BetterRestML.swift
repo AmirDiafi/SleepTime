@@ -9,47 +9,53 @@ import CoreML
 import SwiftUI
 
 struct BetterRestML: View {
-    @State private var wakeUp = Date.now
+    @State private var wakeUp = defaultWakeTime
     @State private var sleepAmount = 8.0
     @State private var coffeeAmount = 1
     @State private var showAlert = false
     @State private var alertTitle = ""
     @State private var alertMessage = ""
     
+    static var defaultWakeTime: Date {
+        var components = DateComponents()
+        components.hour = 7
+        components.minute = 0
+        let cal = Calendar.current.date(from: components) ?? Date.now
+        return cal
+    }
+    
     var body: some View {
-        NavigationView {
-            List {
-                //MARK: WakeUp
-                Section("When do you want to wake up?") {
-                    DatePicker(
-                        "Please select a time",
-                        selection: $wakeUp,
-                        displayedComponents: .hourAndMinute
-                    )
-                    
-                }
-                //MARK: Sleep
-                Section("Desired amount of sleep") {
-                    Stepper(
-                        "\(sleepAmount.formatted()) hours",
-                        value: $sleepAmount,
-                        in: 4...8,
-                        step: 0.5
-                    )
-                }
-                //MARK: Coffee
-                Section("Daily coffee intake") {
-                    Stepper(
-                        "\(coffeeAmount) cop\(coffeeAmount>1 ? "s" : "")",
-                        value: $coffeeAmount,
-                        in: 1...10
-                    )
-                }
+        List {
+            //MARK: WakeUp
+            Section("When do you want to wake up?") {
+                DatePicker(
+                    "Please select a time",
+                    selection: $wakeUp,
+                    displayedComponents: .hourAndMinute
+                )
+                
             }
-            .navigationTitle("BetterRest")
-            .toolbar {
-                Button("Calculate", action: calculateBedTime)
+            //MARK: Sleep
+            Section("Desired amount of sleep") {
+                Stepper(
+                    "\(sleepAmount.formatted()) hours",
+                    value: $sleepAmount,
+                    in: 4...8,
+                    step: 0.5
+                )
             }
+            //MARK: Coffee
+            Section("Daily coffee intake") {
+                Stepper(
+                    "\(coffeeAmount) cop\(coffeeAmount>1 ? "s" : "")",
+                    value: $coffeeAmount,
+                    in: 1...10
+                )
+            }
+        }
+        .navigationTitle("BetterRest")
+        .toolbar {
+            Button("Calculate", action: calculateBedTime)
         }
         .alert(
             alertTitle,
